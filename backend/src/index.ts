@@ -46,10 +46,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger);
 
 // API Routes
-app.use('/api/profile', profileRoutes);
-app.use('/api/days', mealRoutes);
-app.use('/api/progress', progressRoutes);
-app.use('/api/ai', aiRoutes);
+app.use('/profile', profileRoutes);
+app.use('/days', mealRoutes);
+app.use('/progress', progressRoutes);
+app.use('/ai', aiRoutes);
+
 
 // Health check
 app.get('/api/health', (req, res) => {
