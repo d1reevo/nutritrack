@@ -11,8 +11,35 @@ import aiRoutes from './routes/ai';
 
 const app = express();
 
-// Middleware
-app.use(cors());
+// ✅ Настройка CORS
+const allowedOrigins = [
+  'https://nutritrack-frontend-dtq5.onrender.com', // твой фронтенд на Render
+  'http://localhost:5173',                         // на будущее для локальной разработки
+];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Разрешаем запросы без Origin (например, от curl/Postman)
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      // Если источник не в списке — отклоняем
+      return callback(new Error('Not allowed by CORS'));
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+  })
+);
+
+// отдельно обрабатываем preflight-запросы
+app.options('*', cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(requestLogger);
