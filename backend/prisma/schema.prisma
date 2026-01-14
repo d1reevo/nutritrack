@@ -1,0 +1,135 @@
+// Схема БД для трекера питания
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Профиль пользователя (один пользователь, один профиль)
+model UserProfile {
+  id                    String   @id @default(uuid())
+  age                   Int
+  gender                String   // "male" или "female"
+  heightCm              Int
+  weightKg              Float
+  targetWeightKg        Float
+  activityLevel         String   // "low", "medium", "high"
+  dailyCalorieTarget    Float    // Рассчитанная дневная норма калорий
+  
+  // Связи
+  days                  Day[]
+  measurements          BodyMeasurement[]
+  gamification          GamificationState?
+  progressCache         ProgressSummaryCache?
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+// День с итогами
+model Day {
+  id                    String   @id @default(uuid())
+  userProfileId         String
+  date                  String   @unique  // Формат "YYYY-MM-DD"
+  
+  totalCalories         Float    @default(0)
+  totalProtein          Float    @default(0)
+  totalFat              Float    @default(0)
+  totalCarbs            Float    @default(0)
+  
+  dayScore              String   @default("норм")  // "отлично", "норм", "перебор"
+  aiDaySummary          String   @default("")  // Текст оценки от ИИ
+  calorieTargetForDay   Float    @default(2000)
+  
+  mealEntries           MealEntry[]
+  userProfile           UserProfile @relation(fields: [userProfileId], references: [id], onDelete: Cascade)
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  @@index([userProfileId])
+  @@index([date])
+}
+
+// Запись приёма пищи
+model MealEntry {
+  id                    String   @id @default(uuid())
+  dayId                 String
+  
+  time                  String   // "08:00" в формате HH:MM
+  rawText               String   // Сырой текст пользователя на русском
+  imageUrl              String?  // Опционально URL на фото
+  
+  parsedFoodJson        String   @default("[]")  // JSON с распарсенными продуктами
+  
+  calories              Float    @default(0)
+  protein               Float    @default(0)
+  fat                   Float    @default(0)
+  carbs                 Float    @default(0)
+  
+  day                   Day      @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  
+  @@index([dayId])
+}
+
+// Измерения тела
+model BodyMeasurement {
+  id                    String   @id @default(uuid())
+  userProfileId         String
+  
+  date                  String   // "YYYY-MM-DD"
+  weightKg              Float
+  waistCm               Float?
+  chestCm               Float?
+  hipsCm                Float?
+  notes                 String?
+  
+  userProfile           UserProfile @relation(fields: [userProfileId], references: [id], onDelete: Cascade)
+  
+  createdAt             DateTime @default(now())
+  
+  @@index([userProfileId])
+  @@index([date])
+}
+
+// Состояние геймификации
+model GamificationState {
+  id                    String   @id @default(uuid())
+  userProfileId         String   @unique
+  
+  currentStreakDays     Int      @default(0)
+  longestStreakDays     Int      @default(0)
+  xp                    Int      @default(0)
+  level                 Int      @default(1)
+  
+  achievementsJson      String   @default("[]")  // JSON с массивом ачивок
+  lastActiveDate        String?  // "YYYY-MM-DD", для трекинга стрика
+  
+  userProfile           UserProfile @relation(fields: [userProfileId], references: [id], onDelete: Cascade)
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+// Кеш общей оценки прогресса
+model ProgressSummaryCache {
+  id                    String   @id @default(uuid())
+  userProfileId         String   @unique
+  
+  lastComputedAt        DateTime
+  summaryText           String   // Текстовый отчёт от ИИ
+  overallScore          String   // "отлично", "хорошо", "нормально", "есть куда расти"
+  detailsJson           String   @default("{}")  // JSON с подробными данными
+  
+  userProfile           UserProfile @relation(fields: [userProfileId], references: [id], onDelete: Cascade)
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}

@@ -1,0 +1,142 @@
+/**
+ * Примеры запросов к API для тестирования в Postman или curl
+ */
+
+// ============================================
+// 1. ПРОФИЛЬ
+// ============================================
+
+// Создать/обновить профиль
+POST /api/profile
+Content-Type: application/json
+
+{
+  "age": 13,
+  "gender": "male",
+  "heightCm": 172,
+  "weightKg": 65,
+  "targetWeightKg": 60,
+  "activityLevel": "medium"
+}
+
+// Получить профиль
+GET /api/profile
+
+// ============================================
+// 2. ПРИЁМЫ ПИЩИ
+// ============================================
+
+// Получить список дней
+GET /api/days
+
+// Получить день
+GET /api/days/2024-01-15
+
+// Добавить приём пищи
+POST /api/days/2024-01-15/meals
+Content-Type: application/json
+
+{
+  "time": "12:00",
+  "rawText": "2 яйца, 50г сыра, стакан молока"
+}
+
+// Редактировать приём пищи
+PUT /api/meals/meal-id-123
+Content-Type: application/json
+
+{
+  "time": "13:00",
+  "rawText": "2 яйца, 100г сыра"
+}
+
+// Удалить приём пищи
+DELETE /api/meals/meal-id-123
+
+// ============================================
+// 3. ИЗМЕРЕНИЯ
+// ============================================
+
+// Получить измерения
+GET /api/progress/measurements
+
+// Добавить измерение
+POST /api/progress/measurements
+Content-Type: application/json
+
+{
+  "date": "2024-01-15",
+  "weightKg": 64.5,
+  "waistCm": 72,
+  "chestCm": 88,
+  "hipsCm": 92,
+  "notes": "Чувствую себя лучше"
+}
+
+// Удалить измерение
+DELETE /api/progress/measurements/measurement-id-123
+
+// ============================================
+// 4. ГЕЙМИФИКАЦИЯ
+// ============================================
+
+// Получить статус геймификации
+GET /api/progress/gamification
+
+// ============================================
+// 5. ПРОГРЕСС И ИИ
+// ============================================
+
+// Получить сводку прогресса
+GET /api/ai/progress/summary
+
+// Пересчитать прогресс
+POST /api/ai/recompute-progress
+
+// Получить дневное задание
+GET /api/ai/daily-quest
+
+// ============================================
+// 6. ЗДОРОВЬЕ
+// ============================================
+
+// Проверка здоровья сервера
+GET /api/health
+
+// ============================================
+// ПРИМЕРЫ CURL
+// ============================================
+
+/*
+# Создать профиль
+curl -X POST http://localhost:5000/api/profile \
+  -H "Content-Type: application/json" \
+  -d '{
+    "age": 13,
+    "gender": "male",
+    "heightCm": 172,
+    "weightKg": 65,
+    "targetWeightKg": 60,
+    "activityLevel": "medium"
+  }'
+
+# Добавить приём пищи
+curl -X POST http://localhost:5000/api/days/2024-01-15/meals \
+  -H "Content-Type: application/json" \
+  -d '{
+    "time": "12:00",
+    "rawText": "2 яйца, 50г сыра, стакан молока"
+  }'
+
+# Получить день
+curl http://localhost:5000/api/days/2024-01-15
+
+# Получить прогресс
+curl http://localhost:5000/api/ai/progress/summary
+
+# Пересчитать прогресс
+curl -X POST http://localhost:5000/api/ai/recompute-progress
+
+# Получить дневное задание
+curl http://localhost:5000/api/ai/daily-quest
+*/

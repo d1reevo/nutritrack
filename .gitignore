@@ -1,0 +1,17 @@
+# Backend
+node_modules/
+dist/
+.env
+*.db
+*.sqlite
+*.sqlite3
+.DS_Store
+.vscode/
+*.log
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+frontend/.DS_Store
+frontend/.vscode/
