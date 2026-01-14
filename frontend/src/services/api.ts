@@ -1,7 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import { UserProfile, Day, MealEntry, BodyMeasurement, GamificationState, ProgressSummary, DailyQuest } from '../types';
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'https://nutritrack-y0e3.onrender.com/api';
 
 const apiClient: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
