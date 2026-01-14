@@ -14,6 +14,7 @@ const app = express();
 // ✅ Настройка CORS
 const allowedOrigins = [
   'https://nutritrack-frontend-dtq5.onrender.com', // твой фронтенд на Render
+  'https://nutritrack-ye03.onrender.com',
   'http://localhost:5173',                         // на будущее для локальной разработки
 ];
 
